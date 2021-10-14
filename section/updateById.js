@@ -2,8 +2,12 @@ const Section = require("./Model");
 
 function sectionUpdateById(req, res) {
     const sectionId = req.params.sectionId;
+    const newTitle = req.body.title;
     
-    Section.updateOne({ _id: sectionId }, req.body)
+    Section.findOneAndUpdate(
+            {_id: sectionId},
+            {title: newTitle}
+        )
         .exec()
         .then(() => {
             res.status(200).json('Section was updated');
@@ -13,4 +17,5 @@ function sectionUpdateById(req, res) {
             res.status(400).json('Section update error');
         });
 }
+
 module.exports = sectionUpdateById;

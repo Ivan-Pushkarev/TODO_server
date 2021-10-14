@@ -5,6 +5,7 @@ const taskUpdateById = require("./task/updateById");
 const sectionGetAll = require("./section/getAll");
 const sectionDelete = require("./section/deleteById");
 const sectionCreate = require("./section/create");
+const sectionUpdateById = require("./section/updateById");
 
 function routes(app) {
     
@@ -14,6 +15,7 @@ function routes(app) {
     app.get('/section', sectionGetAll)
     app.delete('/section/:sectionId', sectionDelete)
     app.post('/section', sectionCreate)
+    app.patch('/section/:sectionId', sectionUpdateById)
     
     app.get('/task', taskGetAll)
     app.delete('/task/:taskId', taskDelete)
