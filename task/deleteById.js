@@ -23,6 +23,4 @@ function taskDelete(req, res) {
             res.status(400).json('Task delete error');
         })
 }
-
-
 module.exports = taskDelete;
