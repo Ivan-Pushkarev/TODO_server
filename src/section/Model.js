@@ -13,7 +13,6 @@ const sectionSchema = new Schema({
             required: false
         }
     ]
-   
    });
 const Section = mongoose.model('Section', sectionSchema);
 module.exports = Section;

@@ -11,7 +11,7 @@ const options = {
 };
 function dbConnection(){
 mongoose.connect(connectionString, options)
-    .then(() => console.log('Mongo connection OK'))
+    .then(() => console.log('Mongo DB connected'))
     .catch(err => console.log(err))
 }
 module.exports = dbConnection;

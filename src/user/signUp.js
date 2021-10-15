@@ -22,18 +22,11 @@ async function signUp(req, res){
             'super secret',
             { expiresIn: "1d" } )
     
-        res.status(201).json({ result, token })
+        res.status(201).json({result, token})
         
     }
     catch(err){
         res.status(500).json("Something went wrong")
     }
-    
-    
-    
-    
-    
-    
-    
 }
 module.exports = signUp
