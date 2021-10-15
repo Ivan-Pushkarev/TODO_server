@@ -25,15 +25,6 @@ function taskCreate(req, res) {
         .catch((err)=>{
             console.log('Section update error', err)
         })
-    // Section.findById(req.body.section)
-    //     .exec()
-    //     .then((doc) => {
-    //         doc.task = [...doc.task, _id]
-    //         doc.save().catch((e) => {
-    //             throw new Error(e)
-    //         })
-    //     })
-    //
    
     newTask.save()
         .then(() => {

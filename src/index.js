@@ -1,9 +1,9 @@
 const express = require('express');
-const routes = require("./routes");
-const bodyParser = require('./bodyParser');
-const dbConnection = require("./dbConnection");
-const cors = require("./cors");
-const logger = require("./logger");
+const routes = require("./middlewares/routes");
+const bodyParser = require('./middlewares/bodyParser');
+const dbConnection = require("./middlewares/dbConnection");
+const cors = require("./middlewares/cors");
+const logger = require("./middlewares/logger");
 
 const app = express();
 const PORT = process.env.PORT || 8000;

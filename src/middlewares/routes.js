@@ -1,12 +1,12 @@
-const taskCreate = require("./task/create");
-const taskDelete = require("./task/deleteById");
-const taskUpdateById = require("./task/updateById");
-const sectionGetAll = require("./section/getAll");
-const sectionDelete = require("./section/deleteById");
-const sectionCreate = require("./section/create");
-const sectionUpdateById = require("./section/updateById");
-const signIn = require("./user/signIn");
-const signUp = require("./user/signUp");
+const taskCreate = require("../task/create");
+const taskDelete = require("../task/deleteById");
+const taskUpdateById = require("../task/updateById");
+const sectionGetAll = require("../section/getAll");
+const sectionDelete = require("../section/deleteById");
+const sectionCreate = require("../section/create");
+const sectionUpdateById = require("../section/updateById");
+const signIn = require("../user/signIn");
+const signUp = require("../user/signUp");
 const auth = require("./Auth");
 
 function routes(app) {
@@ -22,6 +22,6 @@ function routes(app) {
     
     app.post('/user/signIn', signIn)
     app.post('/user/signUp', signUp)
-    }
+}
     
 module.exports = routes;
