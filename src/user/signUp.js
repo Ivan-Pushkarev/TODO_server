@@ -21,7 +21,6 @@ async function signUp(req, res){
         const token = jwt.sign( { email: result.email, id: result._id },
             'super secret',
             { expiresIn: "1d" } )
-    
         res.status(201).json({result, token})
         
     }

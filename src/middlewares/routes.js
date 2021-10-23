@@ -21,7 +21,7 @@ function routes(app) {
     app.patch('/task/:taskId', auth, taskUpdateById)
     
     app.post('/user/signIn', signIn)
-    app.post('/user/signUp', signUp)
+   // app.post('/user/signUp', signUp)
 }
     
 module.exports = routes;
