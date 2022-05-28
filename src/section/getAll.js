@@ -5,6 +5,7 @@ function sectionGetAll (req, res) {
         .populate('task')
         .exec()
         .then((result) => {
+            console.log('result', result)
             res.status(200).json(result)
         })
         .catch(() =>{

@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const connectionString =
     //'mongodb://localhost/TODO'
-     'mongodb+srv://admin:ClXTnfqQJiRFUsky@cluster0.f0znm.mongodb.net/TODO';
+    'mongodb+srv://admin:63SVJDMOEfQbRzIB@cluster0.f0znm.mongodb.net/TODO'
+    // 'mongodb+srv://admin:ClXTnfqQJiRFUsky@cluster0.f0znm.mongodb.net/TODO';
 const options = {
      useNewUrlParser: true,
      useUnifiedTopology: true,

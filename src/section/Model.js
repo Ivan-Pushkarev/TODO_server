@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema, model } = mongoose;
 
 const sectionSchema = new Schema({
+    _id: Schema.Types.ObjectId,
     title:  {
         type: String,
         required: true,
@@ -14,5 +15,5 @@ const sectionSchema = new Schema({
         }
     ]
    });
-const Section = mongoose.model('Section', sectionSchema);
-module.exports = Section;
+module.exports = model('Section', sectionSchema);
+
