@@ -1,19 +1,42 @@
-const { ApolloServer } = require('apollo-server')
-const typeDefs = require('./graphql/typeDefs');
-const resolvers = require('./graphql/resolvers');
-const mongoose = require("mongoose");
-const MONGODB =  'mongodb+srv://admin:63SVJDMOEfQbRzIB@cluster0.f0znm.mongodb.net/TODO';
+import {ApolloServer} from 'apollo-server-express'
+import express from "express";
+import cors from 'cors';
+import typeDefs from './graphql/typeDefs.js';
+import resolvers from './graphql/resolvers.js'
+import mongoose from "mongoose";
+
+import * as http from "http";
+
+import {buildContext} from 'graphql-passport';
+import sessionMiddleware from "./middlewares/session.js";
+
+const MONGODB = 'mongodb+srv://admin:63SVJDMOEfQbRzIB@cluster0.f0znm.mongodb.net/TODO';
 const PORT = process.env.PORT || 8080;
 
-const server = new ApolloServer({
-    typeDefs,
-    resolvers
-})
-mongoose.connect(MONGODB, {useNewUrlParser: true,  useUnifiedTopology: true})
-    .then(() => {
-        console.log("MongoDB Connected");
-        return server.listen({port: PORT});
-    })
-    .then((res) => {
-        console.log(`Server running at ${res.url}`)
+const startServer = async () => {
+    const app = express();
+    //const httpServer = http.createServer(app);
+
+    const corsOptions = {
+        origin: 'http://localhost:3000',
+        credentials: true,
+    };
+    app.use(cors(corsOptions));
+    sessionMiddleware(app)
+
+    const server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        context: ({ req, res }) => buildContext({ req, res }),
     });
+
+    await server.start()
+    server.applyMiddleware({app, cors: corsOptions});
+
+    await mongoose.connect(MONGODB, {useNewUrlParser: true, useUnifiedTopology: true})
+
+    await new Promise(resolve => app.listen({ port: PORT }, resolve));
+    console.log(`Server ready at http://localhost:8080${server.graphqlPath}`);
+    return { server, app };
+}
+startServer()

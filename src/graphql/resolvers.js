@@ -1,11 +1,18 @@
-const Section = require("../section/Model");
-const Task = require("../task/Model");
-const mongoose = require("mongoose");
+import Section from "../section/Model.js";
+import Task from "../task/Model.js";
+import mongoose from 'mongoose';
+import User from "../user/Model.js";
+import bcrypt from "bcryptjs";
+import {ApolloError} from "apollo-server-express";
 
-module.exports = {
+export default {
     Query: {
         sectionsAll: () => Section.find().exec(),
-        sectionById: (_, {id}) => Section.findById(id)
+        sectionById: (_, {id}) => Section.findById(id),
+        currentUser: (parent, args, context) => {
+            console.log('current user context.user', context.getUser())
+            return context.getUser()
+        },
     },
     Section: {
         task: (parent) => Task.find({section: parent._id})
@@ -19,18 +26,23 @@ module.exports = {
             const newSection = new Section({title: input, _id})
             return newSection.save()
         },
-        updateSection: (parent, { input: { id,...body }}) => Section.findOneAndUpdate({_id: id}, body, {useFindAndModify: false}),
+        updateSection: (parent, {
+            input: {
+                id,
+                ...body
+            }
+        }) => Section.findOneAndUpdate({_id: id}, body, {useFindAndModify: false}),
         deleteSection: async (parent, {id}) => {
-           const deletedSection = await Section.findByIdAndDelete(id)
-           deletedSection.task.forEach(el =>
-               Task.deleteOne({_id: el})
-                   .then(() => {
-                       console.log('task was deleted', el)
-                   })
-                   .catch(() => {
-                       console.log('task delete error')
-                   })
-           )
+            const deletedSection = await Section.findByIdAndDelete(id)
+            deletedSection.task.forEach(el =>
+                Task.deleteOne({_id: el})
+                    .then(() => {
+                        console.log('task was deleted', el)
+                    })
+                    .catch(() => {
+                        console.log('task delete error')
+                    })
+            )
             return deletedSection
         },
 
@@ -65,11 +77,38 @@ module.exports = {
             return deletedTask
         },
 
-        updateTask: (parent, {input:{id, video, description}}) => {
+        updateTask: (parent, {input: {id, video, description}}) => {
             const update = {}
             if (video) update.video = video
             if (description) update.description = description
             return Task.findOneAndUpdate({_id: id}, update)
-        }
+        },
+
+        signup: async (parent, {email, password}, context) => {
+            console.log('Sign Up================================')
+            const existedUser = await User.findOne({email})
+
+            if (existedUser) {
+                throw new ApolloError('User with email already exists') ;
+            }
+            const hashedPassword = await bcrypt.hash(password, 12)
+            const _id = new mongoose.Types.ObjectId
+            const newUser = new User({ _id, email, password: hashedPassword});
+            const savedUser = await newUser.save()
+
+            //context.User.addUser(newUser);
+
+            context.login(savedUser);
+            return {user: savedUser};
+        },
+
+        login: async (parent, {email, password}, context) => {
+            const hashedPassword = await bcrypt.hash(password, 12)
+            const {user} = await context.authenticate('graphql-local', {email, password});
+            console.log('login ======', user)
+            context.login(user);
+            return {user}
+        },
+        logout: (parent, args, context) => context.logout(),
     }
 }

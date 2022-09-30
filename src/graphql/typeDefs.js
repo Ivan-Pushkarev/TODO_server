@@ -1,5 +1,5 @@
-const {gql} = require('apollo-server')
-module.exports = gql`
+import {gql} from 'apollo-server'
+export default gql`
     type Section {
        _id: ID
        title: String!
@@ -13,8 +13,8 @@ module.exports = gql`
         done: Boolean
     }
     type User {
-        email: String!
-        password: String!
+        _id: ID        
+        email: String
     }
     input SectionInput {
         id: ID
@@ -29,9 +29,13 @@ module.exports = gql`
         description: String
         video: String
     }
+    type AuthPayload {
+        user: User
+    }
     type Query {
        sectionsAll: [Section]
        sectionById(id: ID!): Section
+       currentUser: User
     }   
     type Mutation {
         createSection(input: String!): Section!
@@ -41,5 +45,9 @@ module.exports = gql`
         createTask(input: CreateTaskInput!): Task
         updateTask(input: EditTaskInput!): Task
         deleteTask(id: ID!): Task
+
+        signup(email: String!, password: String!): AuthPayload
+        login(email: String!, password: String!): AuthPayload
+        logout: Boolean
     }
 `

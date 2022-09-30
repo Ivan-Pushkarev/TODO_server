@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const { Schema } = mongoose;
 const emailRegExp =
     /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
@@ -7,7 +7,6 @@ const userSchema = new Schema({
     email:  {
         type: String,
         required: true,
-        unique:true,
         match:emailRegExp
     },
     password: {
@@ -16,4 +15,4 @@ const userSchema = new Schema({
     }
    });
 const User = mongoose.model('User', userSchema);
-module.exports = User;
+export default User;
