@@ -23,20 +23,21 @@ const sessionMiddleware = (app) => {
                 httpOnly: true, // can access from document.cookie
                 maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
                 sameSite: 'none',
-                secure: true,
+                secure: false,
+                secureProxy: true
             },
         }),
     );
 
-    // app.use(csrf());
+
     //app.use(passport.authenticate('session'));
 
     // Passport middleware
-    app.use(passport.initialize());
+   app.use(passport.initialize());
     // Allows to use with cookies and get data from Social profiles after login
-    app.use(passport.session());
+   app.use(passport.session());
 
-    passportStrategies(passport);
+   passportStrategies(passport);
 
 }
 

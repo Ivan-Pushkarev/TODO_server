@@ -19,7 +19,6 @@ function passportStrategies(passport) {
                                 'User registered with social auth. Use social auth or reset password to set it.',
                         });
                     }
-
                     // Match password
                     bcrypt.compare(password, user.password, (error, isMatch) => {
 

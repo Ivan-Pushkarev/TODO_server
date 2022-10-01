@@ -1,4 +1,5 @@
 import {gql} from 'apollo-server'
+
 export default gql`
     type Section {
        _id: ID
@@ -12,8 +13,12 @@ export default gql`
         video: String
         done: Boolean
     }
+#    type User {
+#        _id: ID        
+#        email: String
+#    }
     type User {
-        _id: ID        
+        id: ID       
         email: String
     }
     input SectionInput {
@@ -46,6 +51,9 @@ export default gql`
         updateTask(input: EditTaskInput!): Task
         deleteTask(id: ID!): Task
 
+#        signup(email: String!, password: String!): AuthPayload
+#        login(email: String!, password: String!): AuthPayload
+#        logout: Boolean
         signup(email: String!, password: String!): AuthPayload
         login(email: String!, password: String!): AuthPayload
         logout: Boolean

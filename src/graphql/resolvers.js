@@ -84,30 +84,56 @@ export default {
             return Task.findOneAndUpdate({_id: id}, update)
         },
 
-        signup: async (parent, {email, password}, context) => {
-            console.log('Sign Up================================')
-            const existedUser = await User.findOne({email})
+        // signup: async (parent, {email, password}, context) => {
+        //     console.log('Sign Up================================')
+        //     const existedUser = await User.findOne({email})
+        //
+        //     if (existedUser) {
+        //         throw new ApolloError('User with email already exists') ;
+        //     }
+        //     const hashedPassword = await bcrypt.hash(password, 12)
+        //     const _id = new mongoose.Types.ObjectId
+        //     const newUser = new User({ _id, email, password: hashedPassword});
+        //     const savedUser = await newUser.save()
+        //
+        //     //context.User.addUser(newUser);
+        //     console.log('============= Saved User =========', savedUser)
+        //     context.login(savedUser);
+        //     return {user: savedUser};
+        // },
+        //
+        // login: async (parent, {email, password}, context) => {
+        //     const {user} = await context.authenticate('graphql-local', {email, password});
+        //     console.log('============= Login =========', user)
+        //     context.login(user);
+        //     return {user}
+        // },
+        // logout: (parent, args, context) => context.logout(),
+        signup: (parent, { firstName, lastName, email, password }, context) => {
+            const existingUsers = context.User.getUsers();
+            const userWithEmailAlreadyExists = !!existingUsers.find(user => user.email === email);
 
-            if (existedUser) {
-                throw new ApolloError('User with email already exists') ;
+            if (userWithEmailAlreadyExists) {
+                throw new Error('User with email already exists');
             }
-            const hashedPassword = await bcrypt.hash(password, 12)
-            const _id = new mongoose.Types.ObjectId
-            const newUser = new User({ _id, email, password: hashedPassword});
-            const savedUser = await newUser.save()
 
-            //context.User.addUser(newUser);
+            const newUser = {
+                id: Math.random(),
+                firstName,
+                lastName,
+                email,
+                password,
+            };
 
-            context.login(savedUser);
-            return {user: savedUser};
+            context.User.addUser(newUser);
+            context.login(newUser);
+
+            return { user: newUser };
         },
-
-        login: async (parent, {email, password}, context) => {
-            const hashedPassword = await bcrypt.hash(password, 12)
-            const {user} = await context.authenticate('graphql-local', {email, password});
-            console.log('login ======', user)
+        login: async (parent, { email, password }, context) => {
+            const { user } = await context.authenticate('graphql-local', { email, password });
             context.login(user);
-            return {user}
+            return { user }
         },
         logout: (parent, args, context) => context.logout(),
     }
