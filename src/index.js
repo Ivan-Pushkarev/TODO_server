@@ -29,8 +29,8 @@ const schema = makeExecutableSchema({
 // Create an Express app and HTTP server; we will attach the WebSocket
 // server and the ApolloServer to this HTTP server.
 const app = express();
-app.set('trust proxy', true)
-app.use(cors(corsOptions))
+//app.set('trust proxy', true)
+//app.use(cors(corsOptions))
 
 sessionMiddleware(app)
 const httpServer = createServer(app);
