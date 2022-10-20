@@ -16,7 +16,7 @@ const PORT = 8080;
 
 const corsOptions = {
     origin:['https://studio.apollographql.com' , 'http://localhost:3000', 'https://pasv-todo.netlify.app'],
-    //methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
 };
 
@@ -66,7 +66,7 @@ await mongoose.connect('mongodb+srv://admin:63SVJDMOEfQbRzIB@cluster0.f0znm.mong
     {useNewUrlParser: true, useUnifiedTopology: true})
 
 await server.start();
-server.applyMiddleware({ app, cors: false });
+server.applyMiddleware({ app, cors: corsOptions });
 
 
 // Now that our HTTP server is fully set up, actually listen.
