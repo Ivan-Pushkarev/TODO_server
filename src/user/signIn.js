@@ -1,4 +1,4 @@
-const User = require("./Model");
+const User = require("../../../GQL-server-passport/api/models/Model.js");
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 

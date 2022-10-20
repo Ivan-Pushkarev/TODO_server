@@ -1,9 +1,14 @@
 import Section from "../section/Model.js";
 import Task from "../task/Model.js";
 import mongoose from 'mongoose';
-import User from "../user/Model.js";
+import {PubSub} from "graphql-subscriptions";
 import bcrypt from "bcryptjs";
 import {ApolloError} from "apollo-server-express";
+import Message from "../message/Model.js";
+import newArr from "../data/index.js";
+import User from "../user/Model.js";
+
+const pubsub = new PubSub()
 
 export default {
     Query: {
@@ -84,57 +89,72 @@ export default {
             return Task.findOneAndUpdate({_id: id}, update)
         },
 
-        // signup: async (parent, {email, password}, context) => {
-        //     console.log('Sign Up================================')
-        //     const existedUser = await User.findOne({email})
-        //
-        //     if (existedUser) {
-        //         throw new ApolloError('User with email already exists') ;
-        //     }
-        //     const hashedPassword = await bcrypt.hash(password, 12)
-        //     const _id = new mongoose.Types.ObjectId
-        //     const newUser = new User({ _id, email, password: hashedPassword});
-        //     const savedUser = await newUser.save()
-        //
-        //     //context.User.addUser(newUser);
-        //     console.log('============= Saved User =========', savedUser)
-        //     context.login(savedUser);
-        //     return {user: savedUser};
-        // },
-        //
-        // login: async (parent, {email, password}, context) => {
-        //     const {user} = await context.authenticate('graphql-local', {email, password});
-        //     console.log('============= Login =========', user)
-        //     context.login(user);
-        //     return {user}
-        // },
-        // logout: (parent, args, context) => context.logout(),
-        signup: (parent, { firstName, lastName, email, password }, context) => {
-            const existingUsers = context.User.getUsers();
-            const userWithEmailAlreadyExists = !!existingUsers.find(user => user.email === email);
-
-            if (userWithEmailAlreadyExists) {
-                throw new Error('User with email already exists');
+        signup: async (parent, {email, password}, context) => {
+            try {
+                const existedUser = await User.findOne({email})
+                if (existedUser) {
+                    throw new Error('User with email already exists');
+                }
+                const hashedPassword = await bcrypt.hash(password, 12)
+                const _id = new mongoose.Types.ObjectId
+                const newUser = new User({_id, email, password: hashedPassword});
+                const savedUser = await newUser.save()
+                context.login(savedUser);
+                return {user: savedUser};
+            } catch (err) {
+                return err
             }
-
-            const newUser = {
-                id: Math.random(),
-                firstName,
-                lastName,
-                email,
-                password,
-            };
-
-            context.User.addUser(newUser);
-            context.login(newUser);
-
-            return { user: newUser };
         },
-        login: async (parent, { email, password }, context) => {
-            const { user } = await context.authenticate('graphql-local', { email, password });
+
+        login: async (parent, {email, password}, context) => {
+            const {user} = await context.authenticate('graphql-local', {email, password});
             context.login(user);
-            return { user }
+            return {user}
         },
         logout: (parent, args, context) => context.logout(),
+
+        createMessage: async (parent, {text, createdBy}) => {
+            const newMessage = new Message({text, createdBy})
+            const res = await newMessage.save()
+
+            pubsub.publish('MESSAGE_CREATED', {
+                messageCreated: {
+                    text, createdBy
+                }
+            })
+            return res
+        },
+        // dataBase: async() => {
+        //     for (const section of newArr) {
+        //         const _id = new mongoose.Types.ObjectId
+        //         const newSection = new Section({title: section.title, _id, task: []})
+        //         const createdSection = await newSection.save()
+        //         const sectionId = createdSection._id
+        //
+        //         for(const task of section.tasks){
+        //
+        //             const _id = new mongoose.Types.ObjectId
+        //             const newTask = new Task({
+        //                 _id,
+        //                 section: sectionId,
+        //                 description: task.description,
+        //                 video: task.video
+        //             })
+        //             const createdTask = await newTask.save()
+        //             const updatedSection =  await Section.findOneAndUpdate(
+        //                 {_id:sectionId},
+        //                 {$addToSet: {task: createdTask._id}}
+        //             ).exec()
+        //             console.log('updatedSection', updatedSection)
+        //         }
+        //         console.log(sectionId)
+        //     }
+        //     return 'done'
+        // }
+    },
+    Subscription: {
+        messageCreated: {
+            subscribe: () => pubsub.asyncIterator('MESSAGE_CREATED')
+        }
     }
 }

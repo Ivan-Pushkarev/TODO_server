@@ -12,14 +12,14 @@ export default gql`
         description: String!
         video: String
         done: Boolean
-    }
-#    type User {
-#        _id: ID        
-#        email: String
-#    }
+    }#    
     type User {
-        id: ID       
+        _id: ID       
         email: String
+    }
+    type Message {
+        text: String
+        createdBy: String
     }
     input SectionInput {
         id: ID
@@ -51,11 +51,14 @@ export default gql`
         updateTask(input: EditTaskInput!): Task
         deleteTask(id: ID!): Task
 
-#        signup(email: String!, password: String!): AuthPayload
-#        login(email: String!, password: String!): AuthPayload
-#        logout: Boolean
         signup(email: String!, password: String!): AuthPayload
         login(email: String!, password: String!): AuthPayload
         logout: Boolean
+        
+        createMessage(text: String!, createdBy: String!): Message
+#        dataBase(arg: String): String
     }
+    type Subscription {
+         messageCreated: Message
+        }
 `
