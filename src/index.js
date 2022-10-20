@@ -15,7 +15,7 @@ import cors from 'cors'
 const PORT = 8080;
 
 const corsOptions = {
-    origin:['https://studio.apollographql.com' , 'http://localhost:3000'],
+    origin:['https://studio.apollographql.com' , 'http://localhost:3000', 'https://pasv-todo.netlify.app'],
     //methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
 };
